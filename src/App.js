@@ -5,6 +5,7 @@ import Home from './components/home/Home';
 import Posts from './components/posts/Posts';
 import Profiles from './components/profiles/Profiles';
 import Post from './components/posts/Post';
+import CreatePost from './components/posts/CreatePost';
 import Profile from './components/profiles/Profile';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path="/Home" exact element={<Home />} />
         <Route path="/Posts/Post/:id" exact element={<Post />} />
         <Route path="/Profiles/Profile/:name" exact element={<Profile />} />
+        <Route path="/Posts/CreatePost" exact element={<CreatePost />} />
       </Routes>
     </BrowserRouter>
   );  

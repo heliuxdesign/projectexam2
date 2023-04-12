@@ -14,7 +14,7 @@ export default function Posts() {
   const [postError, setPostError] = useState(null);
 
   const apiCalls = [
-      {url: postsUrl, data: postData, setData: setPostData, error: postError, setError: setPostError}
+      {url: postsUrl +"?_author=true", data: postData, setData: setPostData, error: postError, setError: setPostError}
   ]
 
   const options = {
@@ -53,6 +53,7 @@ export default function Posts() {
       <div className="row align-items-start">
       <div className="col">
           <h1>Posts</h1>
+          <Link to={`/Posts/CreatePost`}><h2>Create post</h2></Link>  
           {postError ? ( <div>Error: {postError}</div>) : (
           postData.map(item => (
           <Card style={{ width: '18rem' }}>

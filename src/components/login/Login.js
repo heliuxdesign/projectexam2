@@ -2,8 +2,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { saveToken, getToken } from '../Storage.js';
-import { saveUser } from '../Storage.js';
+import { saveToken, getToken, saveUser } from '../Storage.js';
 import Heading from '../layout/Heading';
 //import "./App.css";
 
@@ -35,32 +34,22 @@ function Login() {
         try {
             const response = await fetch(url, options);
             const json = await response.json();
-    
+            
             if(json.accessToken) {
                 console.log("Saved token...")
                 saveToken(json.accessToken);
-                //const token = getToken();  
-                //console.log(token); 
-               //if (!Array.isArray(token)) {
-                console.log("Got here for some reason");
+                if (json.email) {
+                    saveUser(json.email);
+                }
                 navigate("/Home");
-                //}
-                //saveUser(json.user);
-                //location.href = "www.vg.no";
             }
             
             if(json.errors) {
                 console.log(json.errors);
-                /*displayError("warning", 
-                               "Login is not succesful: invalid login details", 
-                               ".message-container-form"); */
             }
         }
         catch(error) {
             console.log(error.errors[0].message);
-           /* displayError("error",
-                           "Failed to connect",
-                           ".message-container-form");*/
         }
         
     }
@@ -72,8 +61,6 @@ function Login() {
     function onSubmit(data) {
         LoginUser(data); 
     }
-
-    //console.log(errors);
 
     return (
         <>
