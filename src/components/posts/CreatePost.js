@@ -59,7 +59,6 @@ export default function CreatePost() {
     });
 
     function onSubmit(data) { 
-        console.log("blahblah")
         SubmitPost(data);
     }
 
@@ -73,7 +72,7 @@ export default function CreatePost() {
             <input {...register("media")} />
             {postError && <span>{postError}</span>}
             <button>Submit</button>
-        </form>
+            </form>
         </>
     )
 

@@ -4,8 +4,9 @@ import Heading from '../layout/Heading';
 import { useCheckCredentials, navigateToPost } from '../../utils/checkCredentials';
 import Navigation from '../layout/Layout';
 import { postsUrl } from '../../constants/api';
-import { getToken } from '../Storage.js';
+import { getToken, getUsername } from '../Storage.js';
 import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
 
 export default function Posts() {
   useCheckCredentials();
@@ -25,7 +26,7 @@ export default function Posts() {
       }
   };
 
-  useEffect(() => {
+    useEffect(() => {
       (async ()=> {
           for (const call of apiCalls) {
               try {
@@ -44,6 +45,32 @@ export default function Posts() {
           }
       })();
     }, []);
+
+    const handleDeleteClick = async (e) => {
+        console.log(e.currentTarget.id);
+        const id = e.currentTarget.id;
+        
+        setPostData(postData.filter((post) => post.id !== parseInt(id)));
+        
+        const options = {
+            method: "DELETE",
+            headers: {
+               "Content-Type": "application/json",
+               "Authorization": "Bearer " + getToken()
+            }
+        }
+        try {
+            const response = await fetch(postsUrl + "/" + id, options);
+            if (response.ok) {
+                const data = await response.json();
+            }
+            else {
+                console.log("Post could not be deleted");
+            }
+        } catch(error) {
+            console.log("Post could not be deleted");
+        }
+    }
   
   return (
   <>
@@ -61,7 +88,8 @@ export default function Posts() {
               <Card.Body>
               <Card.Title>{item.title}</Card.Title>
               <Card.Text>{item.body}</Card.Text>
-              <Link to={`/Posts/Post/${item.id}`}>Go to Post</Link>  
+              <Link to={`/Posts/Post/${item.id}`}>Go to Post</Link> 
+              {(getUsername() === item.author.email) && <Button id={item.id} onClick={handleDeleteClick}>Delete Post</Button>}
               </Card.Body>
           </Card>
           )))}
@@ -72,6 +100,12 @@ export default function Posts() {
   )      
 }
 
+function username()
+{
+    const username = getUsername();
+    console.log(username);
+    return username;
+}
 
 function sanify_image_url(url)
 {
