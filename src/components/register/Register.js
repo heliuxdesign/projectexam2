@@ -2,8 +2,6 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Heading from '../layout/Heading';
-//import "./App.css";
-
 
 const schema = yup.object().shape({
     name: yup.string().required("Please enter a username"),
@@ -26,31 +24,14 @@ async function registerUser(registerData) {
     try {
         const response = await fetch(url, options);
         const json = await response.json();
-
-        /*if(json.user) {
-            saveToken(json.jwt);
-            saveUser(json.user);
-
-            location.href = "/";
-        }*/
-
-        console.log(json)
         
         if(json.errors) {
             console.log(json.errors);
-            /*displayError("warning", 
-                           "Login is not succesful: invalid login details", 
-                           ".message-container-form"); */
         }
     }
     catch(error) {
-        console.log("here");
         console.log(error.errors[0].message);
-       /* displayError("error",
-                       "Failed to connect",
-                       ".message-container-form");*/
-    }
-    
+    }    
 }
 
 function Register() {
@@ -59,11 +40,8 @@ function Register() {
     });
 
     function onSubmit(data) {
-        console.log(data);
         registerUser(data);    
     }
-
-    //console.log(errors);
 
     return (
         <>

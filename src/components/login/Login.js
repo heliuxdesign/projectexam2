@@ -2,10 +2,8 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { saveToken, getToken, saveUser } from '../Storage.js';
+import { saveToken, saveUser, saveName } from '../Storage.js';
 import Heading from '../layout/Heading';
-//import "./App.css";
-
 
 const schema = yup.object().shape({
     name: yup.string().required("Please enter a username"),
@@ -13,15 +11,11 @@ const schema = yup.object().shape({
     password: yup.string().required("Please enter a password")
 });
 
-
-
-
 function Login() {
     const navigate = useNavigate();
 
     async function LoginUser(loginData) {
         const url = "https://api.noroff.dev/api/v1/social/auth/login";
-    
         const options = {
             method: "POST",
             body: JSON.stringify(loginData),
@@ -30,16 +24,17 @@ function Login() {
             }
         };
         
-        
         try {
             const response = await fetch(url, options);
             const json = await response.json();
             
             if(json.accessToken) {
-                console.log("Saved token...")
                 saveToken(json.accessToken);
                 if (json.email) {
                     saveUser(json.email);
+                }
+                if (json.name) {
+                    saveName(json.name);
                 }
                 navigate("/Home");
             }
@@ -51,7 +46,6 @@ function Login() {
         catch(error) {
             console.log(error.errors[0].message);
         }
-        
     }
 
     const { register, handleSubmit, formState: { errors } } = useForm({

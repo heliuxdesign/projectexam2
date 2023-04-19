@@ -22,65 +22,57 @@ export default function Post() {
     useCheckCredentials();
     const { id } = useParams();
     const postUrl = postsUrl + "/" + id +"?_author=true&_comments=true"
-
+    const reactionUrl = postsUrl + "/" + id + "/react/";
+    const commentUrl = postsUrl + "/" + id + "/comment";
     const [postData, setPostData] = useState([]);
     const [postError, setPostError] = useState(null);
     const [hideForm, setHideForm] = useState(true);
     const [updateError, setUpdateError] = useState(null);
-
-    const apiCalls = [
-        {url: postUrl, data: postData, setData: setPostData, error: postError, setError: setPostError}
-    ]
-  
-    const options = {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + getToken()
-        }
-    };
+    const [selectedEmoji, setSelectedEmoji] = useState(null);
+    const [comment, setComment] = useState('');
   
     useEffect(() => {
         (async ()=> {
-            for (const call of apiCalls) {
-                try {
-                    const response = await fetch(call.url, options);
-                    if (response.ok) {
-                        const data = await response.json();
-                        call.setData(data);
-                        console.log(data);
+            try {
+                const options = {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + getToken()
                     }
-                    else {
-                        call.setError("Could not fetch content from API");
-                    }
-                } catch(error) {
-                    call.setError(error);
-                } 
-            }
+                };
+                const response = await fetch(postUrl, options);
+                if (response.ok) {
+                    const data = await response.json();
+                    setPostData(data);
+                }
+                else {
+                    setPostError("Could not fetch content from API");
+                }
+            } catch(error) {
+                setPostError(error);
+            } 
         })();
-      }, []); 
+    }, []); 
 
-      const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
     });
 
-    const updatePost = async (postData) => {
-        console.log(postData);
+    const updatePost = async (data) => {
         const options = {
             method: "PUT",
-            body: JSON.stringify(postData),
+            body: JSON.stringify(data),
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + getToken()
             }
         };
-
         try {
             const response = await fetch(postUrl, options);
             const json = await response.json();
             
             if (!response.ok){
-                console.log(json.errors[0].message);
                 setUpdateError(json.errors[0].message);
             }
             else {
@@ -92,42 +84,102 @@ export default function Post() {
         catch(error) {
             console.log(error.errors[0].message);
         }
-
     }
 
-      const handleUpdateClick = () => {
+    const handleUpdateClick = () => {
         setHideForm(false);
-      }
+    }
 
-      const onSubmit = (data)=>{
+    const onSubmit = (data)=>{
         updatePost(data);
-      };
+    };
+
+    const handleEmojiClick = async (emoji) => {
+        setSelectedEmoji(emoji);
+        const options = {
+            method: "PUT",
+            headers: {
+                "Authorization": "Bearer " + getToken()
+            }
+        };
+        try {
+            const response = await fetch(reactionUrl + emoji, options);
+            const data = await response.json();
+            if (response.ok) {
+                console.log(data);
+            }
+            else {
+                console.log(data.errors[0].message);
+            }
+        } catch(error) {
+            console.log("Error");
+        } 
+    };
+
+    const handleCommentChange = (event) => {
+        setComment(event.target.value);
+    };
+    
+    const handleCommentSubmit = async () => {
+        const options = {
+            method: "POST",
+            body: JSON.stringify({body: comment}),
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + getToken()
+            }
+        };  
+        try {
+            const response = await fetch(commentUrl, options);
+            const json = await response.json();
+            
+            if (!response.ok){
+                setUpdateError(json.errors[0].message);
+            }
+            else {
+                setUpdateError(null);
+                setPostData({...postData, comments: [...postData?.comments || [], {body: comment}]});
+            }
+        }
+        catch(error) {
+            console.log(error.errors[0].message);
+        }
+        setComment('');
+    };
 
     return (
     <>
-        <Navigation />
-        <Heading title="Post" /> 
-            {postError ? ( <div>Error: {postError}</div>) : (
-                <Card style={{ width: '18rem' }}>
-                    <Card.Body>
-                        <Card.Title>{postData.title}</Card.Title>
-                        <Card.Img variant="top" src={postData.media} alt="some alt image"/>
-                        <Card.Text>{postData.body}</Card.Text> 
-                        {(postData.author && getUsername() === postData.author.email) && <Button id={postData.id} onClick={handleUpdateClick}>Update Post</Button>}
-                    </Card.Body>
-                </Card>
-            )} 
+    <Navigation />
+    <Heading title="Post" /> 
+    {postError ? ( <div>Error: {postError}</div>) : (
+    <Card style={{ width: '18rem' }}>
+      <Card.Body>
+        <Card.Text>
+            <Card.Img  style={{width: "10%", height: "10%" }} variant="top" src={postData.author?.avatar} alt="some alt image"/>
+            {postData.author && postData.author.name}
+        </Card.Text>
+        <Card.Title>{postData.title}</Card.Title>
+        <Card.Img variant="top" src={postData.media} alt="some alt image"/>
+        <Card.Text>{postData.body}</Card.Text>
+        <h5>Comments:</h5>
+        {postData.comments?.map(comment => (<div>{comment.body}</div>))} 
+        <Button onClick={() => handleEmojiClick('👍')}>👍</Button>
+        <Button onClick={() => handleEmojiClick('❤️')}>❤️</Button>
+        {selectedEmoji && <p>Your reaction {selectedEmoji}</p>}
+        <input type="text" value={comment} onChange={handleCommentChange} />
+        <Button onClick={handleCommentSubmit}>Submit comment</Button>
+        {(getUsername() === postData.author?.email) && <Button id={postData.id} onClick={handleUpdateClick}>Update Post</Button>}
+      </Card.Body>
+    </Card>)}
             
-            {hideForm ? (<div></div>) : (
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <input {...register("title")} />
-                    <input {...register("body")} />
-                    <input {...register("media")} />
-                    {updateError && <span>{updateError}</span>}
-                    <button>Submit</button>
-                </form>  
-            )}           
+    {hideForm ? (<div></div>) : (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register("title")} />
+      <input {...register("body")} />
+      <input {...register("media")} />
+      {updateError && <span>{updateError}</span>}
+      <button>Submit</button>
+    </form>)}           
     </>
     )      
 }
-

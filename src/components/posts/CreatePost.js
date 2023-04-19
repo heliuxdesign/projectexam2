@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import Heading from '../layout/Heading';
-import { useCheckCredentials, navigateToPost } from '../../utils/checkCredentials';
+import { useCheckCredentials } from '../../utils/checkCredentials';
 import Navigation from '../layout/Layout';
 import { postsUrl } from '../../constants/api';
 import { getToken } from '../Storage.js';
@@ -16,17 +15,13 @@ const schema = yup.object().shape({
     media: yup.string()
 });
 
-
-
 export default function CreatePost() {
     useCheckCredentials();
 
     const [postError, setPostError] = useState(null);
-
     const navigate = useNavigate();
-    async function SubmitPost(postData){
-        console.log(postData);
 
+    async function SubmitPost(postData){
         const options = {
             method: "POST",
             body: JSON.stringify(postData),
@@ -35,7 +30,6 @@ export default function CreatePost() {
                 "Authorization": "Bearer " + getToken()
             }
         };
-        console.log(options);
         try {
             const response = await fetch(postsUrl, options);
             const json = await response.json();
@@ -44,14 +38,12 @@ export default function CreatePost() {
                 navigate("/Posts")
             }
             else {
-                console.log(json.errors[0].message);
                 setPostError(json.errors[0].message)
             }
         }
         catch(error) {
             console.log(error.errors[0].message);
-        }
-        
+        }        
     }
 
     const { register, handleSubmit, formState: { errors } } = useForm({
@@ -75,5 +67,4 @@ export default function CreatePost() {
             </form>
         </>
     )
-
 }

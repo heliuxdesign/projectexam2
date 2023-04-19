@@ -34,7 +34,6 @@ export default function Posts() {
                   if (response.ok) {
                       const data = await response.json();
                       call.setData(data);
-                      console.log(data);
                   }
                   else {
                       call.setError("Could not fetch content from API");
@@ -98,18 +97,5 @@ export default function Posts() {
     </div>
   </>
   )      
-}
-
-function username()
-{
-    const username = getUsername();
-    console.log(username);
-    return username;
-}
-
-function sanify_image_url(url)
-{
-  if (url === null || url === undefined) return "images/alt_image.jpg"; 
-  return (url.match(/\.(jpeg|jpg|gif|png)$/) != null) ? url : "images/alt_image.jpg"
 }
 
