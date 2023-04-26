@@ -4,6 +4,8 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { saveToken, saveUser, saveName } from '../Storage.js';
 import Heading from '../layout/Heading';
+import { Button, Form } from 'react-bootstrap';
+
 
 const schema = yup.object().shape({
     name: yup.string().required("Please enter a username"),
@@ -58,14 +60,14 @@ function Login() {
 
     return (
         <>
-        <Heading title="Login" />
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <input {...register("name")} />
-            <input {...register("email")} />
-            <input {...register("password")} />
+        <Heading />
+        <Form onSubmit={handleSubmit(onSubmit)}>
+            <input className="input-group" type="text" placeholder="Name" {...register("name")} />
+            <input className="input-group" type="text" placeholder="Email" {...register("email")} />
+            <input className="input-group" type="password" placeholder="Password" {...register("password")} />
             {errors.email && <span>{errors.email.message}</span>}
-            <button>Login</button>
-        </form>
+            <button className="button-red">Login</button>
+        </Form>
         </>
     );
 }

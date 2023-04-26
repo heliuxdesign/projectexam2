@@ -8,6 +8,7 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
+import { Button, Form } from 'react-bootstrap';
 
 const schema = yup.object().shape({
     title: yup.string().required("Please enter a username"),
@@ -58,13 +59,13 @@ export default function CreatePost() {
         <>
           <Navigation />
           <Heading title="CreatePost" /> 
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <input {...register("title")} />
-            <input {...register("body")} />
-            <input {...register("media")} />
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <input className="input-group" type="text" placeholder="Title"{...register("title")} />
+            <input className="input-group" type="text" placeholder="Body"{...register("body")} />
+            <input className="input-group" type="url" placeholder="Image url"{...register("media")} />
             {postError && <span>{postError}</span>}
-            <button>Submit</button>
-            </form>
+            <button className="button-green">Submit</button>
+          </Form>
         </>
     )
 }

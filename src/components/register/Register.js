@@ -1,7 +1,9 @@
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Heading from '../layout/Heading';
+import  Heading  from '../layout/Heading';
+import { Button, Form } from 'react-bootstrap';
+
 
 const schema = yup.object().shape({
     name: yup.string().required("Please enter a username"),
@@ -45,15 +47,15 @@ function Register() {
 
     return (
         <>
-        <Heading title="Register" />
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <input {...register("name")} />
-            <input {...register("email")} />
-            <input {...register("password")} />
-            {errors.email && <span>{errors.email.message}</span>}
-
-            <button>Register</button>
-        </form>
+        <Heading />
+            <h4>Not registered yet?</h4>
+            <Form onSubmit={handleSubmit(onSubmit)}>
+                <input className="input-group" type="text" placeholder="Name" {...register("name")} />
+                <input className="input-group" type="text" placeholder="Email" {...register("email")} />
+                <input className="input-group" type="password" placeholder="Password" {...register("password")} />
+                {errors.email && <span>{errors.email.message}</span>}
+                <button className="button-green">Create a new account</button>
+            </Form>
         </>
     );
 }

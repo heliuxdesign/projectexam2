@@ -5,15 +5,26 @@ import Navigation from '../layout/Layout';
 import { Link } from 'react-router-dom';
 import { profilesUrl } from '../../constants/api';
 import { getToken } from '../Storage.js';
-import Card from 'react-bootstrap/Card';
+import { Card, Container, Row, Col, Button } from 'react-bootstrap';
 
 export default function Contact() {
     useCheckCredentials();
     const [profileData, setProfileData] = useState([]);
     const [profileError, setProfileError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const handleNextPage = () => {
+        setCurrentPage(currentPage + 1);
+    };
+
+    const handlePrevPage = () => {
+        setCurrentPage(currentPage - 1);
+    };
 
     useEffect(() => {
-        (async ()=> {   
+        (async ()=> {  
+            const limit = 30;
+            const offset = (currentPage - 1) * limit; 
             const options = {
                 method: "GET",
                 headers: {
@@ -22,7 +33,7 @@ export default function Contact() {
                 }
             };
             try {
-                const response = await fetch(profilesUrl, options);
+                const response = await fetch(profilesUrl + "?limit=30&offset=" + offset, options);
                 if (response.ok) {
                     const data = await response.json();
                     setProfileData(data);
@@ -34,28 +45,40 @@ export default function Contact() {
                 setProfileError(error);
             } 
         })();
-    }, []);
+    }, [currentPage]);
   
   return (
   <>
     <Navigation />
-    <Heading title="Profiles" /> 
-    <div className="container text-center">
-      <div className="row align-items-start">
-      <div className="col">
+    <Heading /> 
+    <Container className="form-container">
+      <Row>
           <h1>Profiles</h1>
           {profileError ? ( <div>Error: {profileError}</div>) : (
           profileData.map(item => (
-          <Card style={{ width: '18rem' }}>
-            <Card.Body>
-            <Card.Title>{item.name}</Card.Title>
-            <Link to={`/Profiles/Profile/${item.name}`}>Go to Profile</Link>  
-            </Card.Body>
-          </Card>
+            <Col xs={12} md={4}>
+                 <Card style={{ width: '18rem' }}>
+                    <Card.Body>
+                        <Card.Title>{item.name}</Card.Title>
+                         <Link to={`/Profiles/Profile/${item.name}`}>Go to Profile</Link>  
+                    </Card.Body>
+                </Card>
+            </Col>
           )))}
-      </div>
-      </div>
-    </div>
+      </Row>
+    </Container>
+    <Container className="form-container">
+        <Row>
+          <Col xs={12}>
+            <Button disabled={currentPage === 1} onClick={handlePrevPage}>
+              Previous
+            </Button>{" "}
+            <Button disabled={profileData.length < 30} onClick={handleNextPage}>
+              Next
+            </Button>
+          </Col>
+        </Row>
+    </Container>
   </>
   )      
 }

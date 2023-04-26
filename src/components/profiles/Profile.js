@@ -5,9 +5,7 @@ import { useCheckCredentials } from '../../utils/checkCredentials';
 import Navigation from '../layout/Layout';
 import { profilesUrl } from '../../constants/api';
 import { getToken, getName } from '../Storage.js';
-import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
-
+import { Card, Button, Container } from 'react-bootstrap';
 
 export default function Profile() {
     useCheckCredentials();
@@ -78,6 +76,7 @@ export default function Profile() {
     <Navigation />
     <Heading title="Profile" /> 
     {profileError ? ( <div>Error: {profileError}</div>) : (
+    <Container className="form-container">
     <Card style={{ width: '18rem' }}>
         <Card.Body>
             <Card.Text>{profileData.name}</Card.Text>
@@ -93,7 +92,8 @@ export default function Profile() {
                 <Button onClick={handleFollowClick}>Follow</Button> 
             )}
         </Card.Body>
-    </Card>)}                     
+    </Card>
+    </Container>)}                     
     </>
     )      
 }

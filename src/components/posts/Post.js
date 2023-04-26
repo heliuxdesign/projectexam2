@@ -5,11 +5,11 @@ import { useCheckCredentials } from '../../utils/checkCredentials';
 import Navigation from '../layout/Layout';
 import { postsUrl } from '../../constants/api';
 import { getToken, getUsername } from '../Storage.js';
-import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
+import { Card, Button, Container, Form } from 'react-bootstrap';
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Link } from 'react-router-dom';
 
 const schema = yup.object().shape({
     title: yup.string().required("Please enter a username"),
@@ -151,35 +151,38 @@ export default function Post() {
     <>
     <Navigation />
     <Heading title="Post" /> 
+    <p className="centered">Go back to <Link to={`/Posts/`} className="my-link">Posts</Link></p>
     {postError ? ( <div>Error: {postError}</div>) : (
-    <Card style={{ width: '18rem' }}>
-      <Card.Body>
-        <Card.Text>
-            <Card.Img  style={{width: "10%", height: "10%" }} variant="top" src={postData.author?.avatar} alt="some alt image"/>
-            {postData.author && postData.author.name}
-        </Card.Text>
-        <Card.Title>{postData.title}</Card.Title>
-        <Card.Img variant="top" src={postData.media} alt="some alt image"/>
-        <Card.Text>{postData.body}</Card.Text>
-        <h5>Comments:</h5>
-        {postData.comments?.map(comment => (<div>{comment.body}</div>))} 
-        <Button onClick={() => handleEmojiClick('👍')}>👍</Button>
-        <Button onClick={() => handleEmojiClick('❤️')}>❤️</Button>
-        {selectedEmoji && <p>Your reaction {selectedEmoji}</p>}
-        <input type="text" value={comment} onChange={handleCommentChange} />
-        <Button onClick={handleCommentSubmit}>Submit comment</Button>
-        {(getUsername() === postData.author?.email) && <Button id={postData.id} onClick={handleUpdateClick}>Update Post</Button>}
-      </Card.Body>
-    </Card>)}
+    <Container className="form-container">
+        <Card style={{ width: '18rem' }}>
+            <Card.Body>
+                <Card.Text>
+                    <Card.Img  style={{width: "10%", height: "10%" }} variant="top" src={postData.author?.avatar} alt="some alt image"/>
+                    {postData.author && postData.author.name}
+                </Card.Text>
+                <Card.Title>{postData.title}</Card.Title>
+                {postData.media && <Card.Img variant="top" src={postData.media} alt="some alt image"/>}
+                <Card.Text>{postData.body}</Card.Text>
+                <h5>Comments:</h5>
+                {postData.comments?.map(comment => (<div>{comment.body}</div>))} 
+                <Button onClick={() => handleEmojiClick('👍')}>👍</Button>
+                <Button onClick={() => handleEmojiClick('❤️')}>❤️</Button>
+                {selectedEmoji && <p>Your reaction {selectedEmoji}</p>}
+                <input type="text" value={comment} onChange={handleCommentChange} />
+                <Button className="button-green" onClick={handleCommentSubmit}>Submit comment</Button>
+                {(getUsername() === postData.author?.email) && <Button className="button-red" id={postData.id} onClick={handleUpdateClick}>Update Post</Button>}
+            </Card.Body>
+        </Card>
+    </Container>)}
             
     {hideForm ? (<div></div>) : (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input {...register("title")} />
-      <input {...register("body")} />
-      <input {...register("media")} />
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      <input className="input-group" type="text" placeholder="Title" {...register("title")} />
+      <input className="input-group" type="text" placeholder="Body" {...register("body")} />
+      <input className="input-group" type="url" placeholder="Image url" {...register("media")} />
       {updateError && <span>{updateError}</span>}
-      <button>Submit</button>
-    </form>)}           
+      <button className="button-green">Submit</button>
+    </Form>)}           
     </>
     )      
 }

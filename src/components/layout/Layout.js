@@ -1,4 +1,4 @@
-import Navbar from 'react-bootstrap/Navbar';
+import { Navbar, Container } from 'react-bootstrap';
 import Nav from 'react-bootstrap/Nav';
 import {
     BrowserRouter as Router,
@@ -6,12 +6,8 @@ import {
     Route,
     NavLink,
   } from 'react-router-dom';
-import Container from 'react-bootstrap/Container';
-import Home from '../home/Home';
-import Posts from '../posts/Posts';
-import Profiles from '../profiles/Profiles';
-import Button from 'react-bootstrap/Button';
 import { clearStorage } from '../Storage.js';
+import logo from '../../images/logo.png';
 
 
 function Navigation() {
@@ -22,13 +18,13 @@ function Navigation() {
 
   return (
   <>
-  <Navbar bg="dark" variant="dark" expand="lg">
-    <NavLink to="/" exact>
-      <Navbar.Brand>SOME</Navbar.Brand>
+  <Navbar bg="light" expand="lg" className="some-navbar">
+    <NavLink classNmae="navbar-logo" to="/home" exact>
+      <Navbar.Brand><img src={logo} alt="form-image" className="nav-logo" /></Navbar.Brand>
     </NavLink>
     <Navbar.Toggle aria-controls="basic-navbar-nav" />
     <Navbar.Collapse id="basic-navbar-nav">
-      <Nav className="mr-auto">
+      <Nav className="ms-auto">
         <NavLink to="/home" className="nav-link">Home</NavLink>
         <NavLink to="/posts" className="nav-link">Posts</NavLink>
         <NavLink to="/profiles" className="nav-link">Profiles</NavLink>

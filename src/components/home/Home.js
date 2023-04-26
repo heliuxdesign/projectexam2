@@ -4,14 +4,11 @@ import { useCheckCredentials } from '../../utils/checkCredentials';
 import Navigation from '../layout/Layout';
 import { postsUrl, profilesUrl } from '../../constants/api';
 import { getName, getToken } from '../Storage.js';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import { Card, Container, Row, Col, Button } from 'react-bootstrap';
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Link } from 'react-router-dom';
 
 
 
@@ -50,7 +47,6 @@ export default function Home() {
                     const response = await fetch(call.url, options);
                     if (response.ok) {
                         const data = await response.json();
-                        console.log(data);
                         call.setData(Array.isArray(data) ? data.slice(0, 3) : data);
                     }
                     else {
@@ -114,70 +110,73 @@ export default function Home() {
     return (
     <>
       <Navigation />
-      <Heading title="Home" /> 
-      
-      <Container>
-        <Row>
-        <Col xs={12} md={4}>
-            <h1>Posts</h1>
-            {postError ? ( <div>Error: {postError}</div>) : (
-            postData.map(item => (
-            <Card style={{ width: '18rem' }}>
-                <Card.Img variant="top" src={item.media} alt="No image"/>
-                <Card.Body>
-                <Card.Title>{item.title}</Card.Title>
-                <Card.Text>{item.body}</Card.Text>
-                <Button variant="primary">Go somewhere</Button>
-                </Card.Body>
-            </Card>
-            )))}
-        </Col>
-        </Row>
-      </Container>
+      <Heading /> 
 
-      <div className="container text-center">
-        <div className="row align-items-start">
-        <div className="col">
-            <h1>Profiles</h1>
-            {profileError ? ( <div>Error: {profileError}</div>) : (
-            profileData.map(item => (
-            <Card style={{ width: '18rem' }}>
-                <Card.Img variant="top" src={item.avatar} alt="some alt image"/>
-                <Card.Body>
-                <Card.Title>{item.name}</Card.Title>
-                <Card.Text><img width="50" height="50" src={item.banner} alt="som alt banner"/></Card.Text>
-                <Button variant="primary">Go somewhere</Button>
-                </Card.Body>
-            </Card>
-            )))}
-        </div>
-        </div>
-      </div>
-
-      <Container>
+      <Container className="form-container">
         <Row>
-        <Col xs={12} md={4}>
-            <h1>My profile</h1>
+        <Col>
             <Card style={{ width: '18rem' }}>
                 <Card.Img />
                 <Card.Body>
                 <Card.Title>{myProfileData.name}</Card.Title>
-                <Card.Text><img width="50" height="50" src={myProfileData.banner} alt="som alt banner"/></Card.Text>
-                <Card.Text><img width="50" height="50" src={myProfileData.avatar} alt="som alt avatar"/></Card.Text>
-                <Button onClick={handleUpdateBannerAvatar}>Update Banner and Avatar</Button>
+                <Card.Text><img width="75" height="75" src={myProfileData.banner} alt="som alt banner"/></Card.Text>
+                <Card.Text><img width="75" height="75" src={myProfileData.avatar} alt="som alt avatar"/></Card.Text>
+                <Button onClick={handleUpdateBannerAvatar} className="button-green" >Update Banner and Avatar</Button>
                 </Card.Body>
             </Card>
             {hideForm ? (<div></div>) : (
             <form onSubmit={handleSubmit(onSubmit)}>
-                <input {...register("banner")} />
-                <input {...register("avatar")} />
+                <input className="input-group" type="url" placeholder="Banner url" {...register("banner")} />
+                <input className="input-group" type="url" placeholder="Avatar url"{...register("avatar")} />
                 {updateError && <span>{updateError}</span>}
-                <button>Update</button>
+                <button className="button-red">Update</button>
             </form>)}           
+        </Col>
+        <Col>
+            <h1>My profile</h1>
+            <p>Here you can update your banner and avatar.</p>
+            <p>If you want to make a post go to <Link to={`/Posts/`} className="my-link">Posts</Link> page.</p>
         </Col>
         </Row>
       </Container>
-    
+      
+      <Container className="form-container">
+        <Row>
+            <h2>Posts</h2>
+            {postError ? ( <div>Error: {postError}</div>) : (
+            postData.map(item => (
+                <Col xs={12} md={4}>
+                    <Card style={{ width: '18rem' }}>
+                        <Card.Img variant="top" src={item.media} alt="No image"/>
+                        <Card.Body>
+                            <Card.Title>{item.title}</Card.Title>
+                            <Card.Text>{item.body}</Card.Text>
+                            <Button className="button-green">Go somewhere</Button>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            )))}
+        </Row>
+      </Container>
+
+      <Container className="form-container">
+        <Row>
+            <h2>Profiles</h2>
+            {profileError ? ( <div>Error: {profileError}</div>) : (
+            profileData.map(item => (
+                <Col xs={12} md={4}>
+                    <Card style={{ width: '18rem' }}>
+                        <Card.Img variant="top" src={item.avatar} alt="some alt image"/>
+                        <Card.Body>
+                            <Card.Title>{item.name}</Card.Title>
+                            <Card.Text><img width="50" height="50" src={item.banner} alt="som alt banner"/></Card.Text>
+                            <Button className="button-green">Go somewhere</Button>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            )))}
+        </Row>
+      </Container>
 
     </>
     )      
