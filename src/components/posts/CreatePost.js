@@ -7,8 +7,9 @@ import { getToken } from '../Storage.js';
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button, Form } from 'react-bootstrap';
+import Footer from '../layout/Footer';
 
 const schema = yup.object().shape({
     title: yup.string().required("Please enter a username"),
@@ -59,6 +60,7 @@ export default function CreatePost() {
         <>
           <Navigation />
           <Heading title="CreatePost" /> 
+          <p className="centered">Go back to <Link to={`/Posts/`} className="my-link">Posts</Link></p>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <input className="input-group" type="text" placeholder="Title"{...register("title")} />
             <input className="input-group" type="text" placeholder="Body"{...register("body")} />
@@ -66,6 +68,7 @@ export default function CreatePost() {
             {postError && <span>{postError}</span>}
             <button className="button-green">Submit</button>
           </Form>
+          <Footer />
         </>
     )
 }

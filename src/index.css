@@ -12,11 +12,21 @@ h1, h2 {
   text-align: center;
 }
 
+
 /* Nav */
 
 .some-navbar {
   background-color: #FB5906 !important;
   color: #F2F2F2;
+  
+}
+
+.navbar-logo {
+  padding-left: 40px;
+}
+
+.nav-link {
+  margin: 5px 0 0 20px;
 }
 
 .some-navbar .nav-link {
@@ -83,6 +93,7 @@ h1, h2 {
 .input-group {
   display: block;
   width: 90%;
+
   margin-bottom: 10px;
 }
 
@@ -101,8 +112,6 @@ input {
   padding: 4px;;
 }
 
-/* Cards */
-
 /* Images */
 
 .img-logo {
@@ -112,3 +121,21 @@ input {
 .nav-logo {
   width: 4rem;
 }
+
+/*Cars */
+
+
+/* Footer */
+
+footer {
+ margin-top: 20px;
+ height: 40px; 
+ background-color: #FB5906;
+}
+
+.footer-logo {
+  height: 35px;
+  padding: 5px;
+  margin-left: 20px;
+}
+

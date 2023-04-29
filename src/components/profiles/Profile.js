@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Heading from '../layout/Heading';
 import { useCheckCredentials } from '../../utils/checkCredentials';
 import Navigation from '../layout/Layout';
@@ -75,13 +75,14 @@ export default function Profile() {
     <>
     <Navigation />
     <Heading title="Profile" /> 
+    <p className="centered">Go back to <Link to={`/Profiles/`} className="my-link">Profiles</Link></p>
     {profileError ? ( <div>Error: {profileError}</div>) : (
     <Container className="form-container">
     <Card style={{ width: '18rem' }}>
         <Card.Body>
             <Card.Text>{profileData.name}</Card.Text>
-            <Card.Img variant="top" src={profileData.avatar} alt="some alt avatar"/>
-            <Card.Img variant="top" src={profileData.banner} alt="some alt banner"/>
+            {profileData.avatar && <Card.Img variant="top" src={profileData.avatar} alt="some alt avatar"/>}
+            {profileData.banner && <Card.Img variant="top" src={profileData.banner} alt="some alt banner"/>}
             <Card.Text>E-mail: {profileData.email}</Card.Text>
             <Card.Text>Followers: {profileData._count ? profileData._count.followers : "fetching..."} </Card.Text>
             <Card.Text>Following: {profileData._count ? profileData._count.following : "fetching..."}</Card.Text>

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { profilesUrl } from '../../constants/api';
 import { getToken } from '../Storage.js';
 import { Card, Container, Row, Col, Button } from 'react-bootstrap';
+import Footer from '../layout/Footer';
 
 export default function Contact() {
     useCheckCredentials();
@@ -51,16 +52,16 @@ export default function Contact() {
   <>
     <Navigation />
     <Heading /> 
-    <Container className="form-container">
+    <Container>
       <Row>
           <h1>Profiles</h1>
           {profileError ? ( <div>Error: {profileError}</div>) : (
           profileData.map(item => (
-            <Col xs={12} md={4}>
-                 <Card style={{ width: '18rem' }}>
+            <Col xs={12} md={4} className="mb-4">
+                 <Card className="h-100" style={{ height: "250px" }}>
                     <Card.Body>
                         <Card.Title>{item.name}</Card.Title>
-                         <Link to={`/Profiles/Profile/${item.name}`}>Go to Profile</Link>  
+                         <Link className="my-link" to={`/Profiles/Profile/${item.name}`}>Go to Profile</Link>  
                     </Card.Body>
                 </Card>
             </Col>
@@ -79,6 +80,7 @@ export default function Contact() {
           </Col>
         </Row>
     </Container>
+    <Footer />
   </>
   )      
 }

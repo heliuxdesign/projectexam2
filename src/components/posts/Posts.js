@@ -6,6 +6,7 @@ import Navigation from '../layout/Layout';
 import { postsUrl } from '../../constants/api';
 import { getToken, getUsername } from '../Storage.js';
 import { Button, Card, Container, Row, Col } from 'react-bootstrap';
+import Footer from '../layout/Footer';
 
 
 export default function Posts() {
@@ -77,19 +78,19 @@ export default function Posts() {
   <>
     <Navigation />
     <Heading /> 
-    <Container className="form-container">
-      <Row>
+    <Container>
+      <Row >
           <h1>Posts</h1>
-          <Link to={`/Posts/CreatePost`} className="my-link"><h2>Create post</h2></Link>  
+          <p className="centered">Create your own post here: <Link to={`/Posts/CreatePost`} className="my-link"><h2>Create post</h2></Link></p>
           {postError ? ( <div>Error: {postError}</div>) : (
           postData.map(item => (
-            <Col xs={12} md={4}>
-                <Card style={{ width: '18rem' }}>
-                    {item.media && <Card.Img variant="top" src={item.media} alt="some alt image"/>}
+            <Col xs={12} md={4} className="mb-4">
+                <Card className="h-100" style={{ height: "250px" }}>
+                    {item.media && <Card.Img variant="top" src={item.media} alt="some alt image" style={{ height: "225px", objectFit: "cover" }}/>}
                     <Card.Body>
                         <Card.Title>{item.title}</Card.Title>
                         <Card.Text>{item.body}</Card.Text>
-                        <Link to={`/Posts/Post/${item.id}`}>Go to Post</Link> 
+                        <Link className="my-link" to={`/Posts/Post/${item.id}`}>Go to Post</Link> 
                         {(getUsername() === item.author?.email) && <Button className="button-red" id={item.id} onClick={handleDeleteClick}>Delete Post</Button>}
                     </Card.Body>
                 </Card>
@@ -109,6 +110,7 @@ export default function Posts() {
           </Col>
         </Row>
     </Container>
+    <Footer />
   </>
   )      
 }

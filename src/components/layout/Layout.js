@@ -19,18 +19,20 @@ function Navigation() {
   return (
   <>
   <Navbar bg="light" expand="lg" className="some-navbar">
-    <NavLink classNmae="navbar-logo" to="/home" exact>
-      <Navbar.Brand><img src={logo} alt="form-image" className="nav-logo" /></Navbar.Brand>
-    </NavLink>
-    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-    <Navbar.Collapse id="basic-navbar-nav">
-      <Nav className="ms-auto">
-        <NavLink to="/home" className="nav-link">Home</NavLink>
-        <NavLink to="/posts" className="nav-link">Posts</NavLink>
-        <NavLink to="/profiles" className="nav-link">Profiles</NavLink>
-        <NavLink to="/" className="nav-link" onClick={onClickHandler}>Log out</NavLink>
-      </Nav>
-    </Navbar.Collapse>
+    <Container>
+      <NavLink classNmae="navbar-logo" to="/home" exact>
+        <Navbar.Brand><img src={logo} alt="logo-image" className="nav-logo" /></Navbar.Brand>
+      </NavLink>
+      <Navbar.Toggle aria-controls="basic-navbar-nav" />
+      <Navbar.Collapse id="basic-navbar-nav">
+        <Nav className="ms-auto">
+          <NavLink to="/home" className="nav-link">Home</NavLink>
+          <NavLink to="/posts" className="nav-link">Posts</NavLink>
+          <NavLink to="/profiles" className="nav-link">Profiles</NavLink>
+          <NavLink to="/" className="nav-link" onClick={onClickHandler}>Log out</NavLink>
+        </Nav>
+      </Navbar.Collapse>
+    </Container>
   </Navbar>
   </>
   );
