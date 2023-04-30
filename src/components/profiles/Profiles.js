@@ -37,13 +37,18 @@ export default function Contact() {
                 const response = await fetch(profilesUrl + "?limit=30&offset=" + offset, options);
                 if (response.ok) {
                     const data = await response.json();
-                    setProfileData(data);
+                    if (data.errors){
+                        setProfileError("Could not fetch content from API");
+                    }
+                    else{
+                        setProfileData(data);
+                    }                    
                 }
                 else {
                     setProfileError("Could not fetch content from API");
                 }
             } catch(error) {
-                setProfileError(error);
+                setProfileError("Could not fetch content from API");
             } 
         })();
     }, [currentPage]);
@@ -68,7 +73,7 @@ export default function Contact() {
           )))}
       </Row>
     </Container>
-    <Container className="form-container">
+    <Container className="layout-container">
         <Row>
           <Col xs={12}>
             <Button disabled={currentPage === 1} onClick={handlePrevPage}>

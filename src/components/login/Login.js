@@ -4,7 +4,8 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { saveToken, saveUser, saveName } from '../Storage.js';
 import Heading from '../layout/Heading';
-import { Button, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
+import { useState } from 'react';
 
 
 const schema = yup.object().shape({
@@ -15,6 +16,7 @@ const schema = yup.object().shape({
 
 function Login() {
     const navigate = useNavigate();
+    const [loginError, setLoginError] = useState(null);
 
     async function LoginUser(loginData) {
         const url = "https://api.noroff.dev/api/v1/social/auth/login";
@@ -42,11 +44,11 @@ function Login() {
             }
             
             if(json.errors) {
-                console.log(json.errors);
+                setLoginError(json.errors[0].message);
             }
         }
         catch(error) {
-            console.log(error.errors[0].message);
+            setLoginError("Unable to login");
         }
     }
 
@@ -65,7 +67,7 @@ function Login() {
             <input className="input-group" type="text" placeholder="Name" {...register("name")} />
             <input className="input-group" type="text" placeholder="Email" {...register("email")} />
             <input className="input-group" type="password" placeholder="Password" {...register("password")} />
-            {errors.email && <span>{errors.email.message}</span>}
+            {loginError && <span>{loginError}</span>}
             <button className="button-red">Login</button>
         </Form>
         </>

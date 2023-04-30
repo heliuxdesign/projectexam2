@@ -21,7 +21,7 @@ function Navigation() {
   <Navbar bg="light" expand="lg" className="some-navbar">
     <Container>
       <NavLink classNmae="navbar-logo" to="/home" exact>
-        <Navbar.Brand><img src={logo} alt="logo-image" className="nav-logo" /></Navbar.Brand>
+        <Navbar.Brand><img src={logo} alt="Some logo" className="nav-logo" /></Navbar.Brand>
       </NavLink>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">

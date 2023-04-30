@@ -10,6 +10,7 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from 'react-router-dom';
+import Footer from '../layout/Footer';
 
 const schema = yup.object().shape({
     title: yup.string().required("Please enter a username"),
@@ -28,6 +29,7 @@ export default function Post() {
     const [postError, setPostError] = useState(null);
     const [hideForm, setHideForm] = useState(true);
     const [updateError, setUpdateError] = useState(null);
+    const [commentError, setCommentError] = useState(null);
     const [selectedEmoji, setSelectedEmoji] = useState(null);
     const [comment, setComment] = useState('');
   
@@ -44,13 +46,18 @@ export default function Post() {
                 const response = await fetch(postUrl, options);
                 if (response.ok) {
                     const data = await response.json();
-                    setPostData(data);
+                    if(data.errors){
+                        setPostError("Could not fetch content from API");
+                    }
+                    else{
+                        setPostData(data);
+                    }
                 }
                 else {
                     setPostError("Could not fetch content from API");
                 }
             } catch(error) {
-                setPostError(error);
+                setPostError("Could not fetch content from API");
             } 
         })();
     }, []); 
@@ -73,7 +80,12 @@ export default function Post() {
             const json = await response.json();
             
             if (!response.ok){
-                setUpdateError(json.errors[0].message);
+                if (json.errors){
+                    setUpdateError(json.errors[0].message);
+                }
+                else{
+                    setUpdateError("Unable to update post");
+                }
             }
             else {
                 setHideForm(true);
@@ -82,7 +94,7 @@ export default function Post() {
             }
         }
         catch(error) {
-            console.log(error.errors[0].message);
+            setUpdateError("Unable to update post");
         }
     }
 
@@ -105,10 +117,7 @@ export default function Post() {
         try {
             const response = await fetch(reactionUrl + emoji, options);
             const data = await response.json();
-            if (response.ok) {
-                console.log(data);
-            }
-            else {
+            if (!response.ok) {
                 console.log(data.errors[0].message);
             }
         } catch(error) {
@@ -134,15 +143,18 @@ export default function Post() {
             const json = await response.json();
             
             if (!response.ok){
-                setUpdateError(json.errors[0].message);
+                setCommentError("Unable to add comment"); 
+            }
+            else if (json.errors){
+                setCommentError(json.errors[0].message);
             }
             else {
-                setUpdateError(null);
+                setCommentError(null);
                 setPostData({...postData, comments: [...postData?.comments || [], {body: comment}]});
             }
         }
         catch(error) {
-            console.log(error.errors[0].message);
+            setCommentError("Unable to add comment");
         }
         setComment('');
     };
@@ -153,22 +165,23 @@ export default function Post() {
     <Heading title="Post" /> 
     <p className="centered">Go back to <Link to={`/Posts/`} className="my-link">Posts</Link></p>
     {postError ? ( <div>Error: {postError}</div>) : (
-    <Container className="form-container">
-        <Card style={{ width: '18rem' }}>
+    <Container style={{ margin: 'auto', width: '50%' }}>
+        <Card className="h-100" style={{ height: "250px" }}>
             <Card.Body>
                 <Card.Text>
-                    <Card.Img  style={{width: "10%", height: "10%" }} variant="top" src={postData.author?.avatar} alt="some alt image"/>
-                    {postData.author && postData.author.name}
+                {postData.avatar && <Card.Img  style={{width: "10%", height: "10%" }} variant="top" src={postData.author?.avatar} alt="some alt image"/>}
+                <h5>Author:</h5>  {postData.author && postData.author.name}
                 </Card.Text>
-                <Card.Title>{postData.title}</Card.Title>
-                {postData.media && <Card.Img variant="top" src={postData.media} alt="some alt image"/>}
-                <Card.Text>{postData.body}</Card.Text>
-                <h5>Comments:</h5>
-                {postData.comments?.map(comment => (<div>{comment.body}</div>))} 
-                <Button onClick={() => handleEmojiClick('👍')}>👍</Button>
-                <Button onClick={() => handleEmojiClick('❤️')}>❤️</Button>
+                <Card.Title><h5>Title:</h5> {postData.title}</Card.Title>
+                {postData.media && <Card.Img variant="top" src={postData.media} alt="No image available"/>}
+                <Card.Text>Body: {postData.body}</Card.Text>
+                <Button className="button-emoji" onClick={() => handleEmojiClick('👍')}>👍</Button>
+                <Button className="button-emoji" onClick={() => handleEmojiClick('❤️')}>❤️</Button>
                 {selectedEmoji && <p>Your reaction {selectedEmoji}</p>}
-                <input type="text" value={comment} onChange={handleCommentChange} />
+                <h5>Comments:</h5>
+                {postData.comments?.map(comment => (<div>{comment.body}<hr/></div>))} 
+                <input className="input-group" type="text" placeholder="Write your comment here..." value={comment} onChange={handleCommentChange} />
+                {commentError && <span>{commentError}</span>}
                 <Button className="button-green" onClick={handleCommentSubmit}>Submit comment</Button>
                 {(getUsername() === postData.author?.email) && <Button className="button-red" id={postData.id} onClick={handleUpdateClick}>Update Post</Button>}
             </Card.Body>
@@ -182,7 +195,8 @@ export default function Post() {
       <input className="input-group" type="url" placeholder="Image url" {...register("media")} />
       {updateError && <span>{updateError}</span>}
       <button className="button-green">Submit</button>
-    </Form>)}           
+    </Form>)}
+    <Footer />         
     </>
     )      
 }

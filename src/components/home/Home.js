@@ -24,6 +24,7 @@ export default function Home() {
 
     const [myProfileData, setMyProfileData] = useState([]);
     const [myProfileError, setMyProfileError] = useState(null);
+    const [myProfileChanged, setMyProfileChanged] = useState(false);
 
     const myProfileUrl  = profilesUrl + "/" + getName();
 
@@ -48,17 +49,24 @@ export default function Home() {
                     const response = await fetch(call.url, options);
                     if (response.ok) {
                         const data = await response.json();
-                        call.setData(Array.isArray(data) ? data.slice(0, 3) : data);
+                        if (data.errors)
+                        {
+                            call.setError("Could not fetch content from API");
+                        }
+                        else
+                        {
+                            call.setData(Array.isArray(data) ? data.slice(0, 3) : data);
+                        }
                     }
                     else {
                         call.setError("Could not fetch content from API");
                     }
                 } catch(error) {
-                    call.setError(error);
+                    call.setError("Could not fetch content from API");
                 } 
             }
         })();
-      }, []);
+      }, [myProfileChanged]);
 
     const [hideForm, setHideForm] = useState(true);
     const [updateError, setUpdateError] = useState(null);
@@ -85,26 +93,26 @@ export default function Home() {
             const response = await fetch(myProfileUrl + "/media", options);
             const json = await response.json();
             
-            if (!response.ok){
+            if (json.errors){
                 setUpdateError(json.errors[0].message);
             }
             else {
                 setHideForm(true);
                 setMyProfileData(json);
                 setUpdateError(null);
+                setMyProfileChanged(!myProfileChanged);
             }
         }
         catch(error) {
-            console.log(error.errors[0].message);
+            setUpdateError("Could not update profile");
         }
     } 
 
     const onSubmit = (data)=>{
-        console.log(data);
         updateMyProfile(data);
     };
 
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit } = useForm({
         resolver: yupResolver(schema),
     });
     
@@ -113,19 +121,19 @@ export default function Home() {
       <Navigation />
       <Heading /> 
 
-      <Container className="form-container">
+      <Container className="layout-container">
         <Row>
         <Col xs={{ span: 12, order: 2 }} md={{ span: 6, order: 1 }}>
-            <Card className="h-100" style={{ width: '18rem' }}>
+            <Card  style={{ width: '18rem' }}>
                 <Card.Img />
                 <Card.Body>
                 <Card.Title>{myProfileData.name}</Card.Title>
                 <Card.Text><img width="75" height="75" src={myProfileData.banner} alt="You are missing banner"/></Card.Text>
                 <Card.Text><img width="75" height="75" src={myProfileData.avatar} alt="You are missing avatar"/></Card.Text>
-                <Card.Text>E-mail: {profileData.email}</Card.Text>
-                <Card.Text>Followers: {profileData._count ? profileData._count.followers : "fetching..."} </Card.Text>
-                <Card.Text>Following: {profileData._count ? profileData._count.following : "fetching..."}</Card.Text>
-                <Card.Text>Posts: {profileData._count ? profileData._count.posts : "fetching..."}</Card.Text>
+                <Card.Text>E-mail: {myProfileData.email}</Card.Text>
+                <Card.Text>Followers: {myProfileData._count ? myProfileData._count.followers : "fetching..."} </Card.Text>
+                <Card.Text>Following: {myProfileData._count ? myProfileData._count.following : "fetching..."}</Card.Text>
+                <Card.Text>Posts: {myProfileData._count ? myProfileData._count.posts : "fetching..."}</Card.Text>
                 <Button onClick={handleUpdateBannerAvatar} className="button-green" >Update Banner and Avatar</Button>
                 </Card.Body>
             </Card>
@@ -145,9 +153,9 @@ export default function Home() {
         </Row>
       </Container>
       
-      <Container >
+      <Container>
         <Row>
-            <h2>Posts</h2>
+            <h2>Latest posts</h2>
             {postError ? ( <div>Error: {postError}</div>) : (
             postData.map(item => (
                 <Col xs={12} md={4} className="mb-4">
@@ -166,7 +174,7 @@ export default function Home() {
 
       <Container>
         <Row>
-            <h2>Profiles</h2>
+            <h2>Latest profiles</h2>
             {profileError ? ( <div>Error: {profileError}</div>) : (
             profileData.map(item => (
                 <Col xs={12} md={4} className="mb-4" >
@@ -174,7 +182,7 @@ export default function Home() {
                         {item.avatar &&<Card.Img variant="top" src={item.avatar} alt="some alt image"/> }
                         <Card.Body>
                             <Card.Title>{item.name}</Card.Title>
-                            <Card.Text><img width="50" height="50" src={item.banner} alt="som alt banner"/></Card.Text>
+                            {item.banner && <Card.Text><img width="50" height="50" src={item.banner} alt="som alt banner"/></Card.Text>}
                             <Link className="my-link" to={`/Profiles/Profile/${item.name}`}>Go to the profile</Link>
                         </Card.Body>
                     </Card>

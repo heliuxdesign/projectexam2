@@ -8,7 +8,7 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate, Link } from "react-router-dom";
-import { Button, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import Footer from '../layout/Footer';
 
 const schema = yup.object().shape({

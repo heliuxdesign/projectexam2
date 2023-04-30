@@ -6,10 +6,10 @@ import logo from '../../images/logo.png';
 export default function LandingPage() {
     return (
         <>
-            <Container className="form-container">
+            <Container className="layout-container">
                 <Row>
-                    <Col xs={12} md={6}>
-                        <img src={logo} alt="form-image" className="img-logo" />
+                    <Col xs={12} md={6} className="centered">
+                        <img src={logo} alt="Some logo" className="img-logo"/>
                         <h1>SOME - and you can contact the whole world </h1>
                         <p>Create your own profile and you can make posts on topics of your choice!</p>
                     </Col>

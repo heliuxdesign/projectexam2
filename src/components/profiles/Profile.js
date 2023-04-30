@@ -6,6 +6,7 @@ import Navigation from '../layout/Layout';
 import { profilesUrl } from '../../constants/api';
 import { getToken, getName } from '../Storage.js';
 import { Card, Button, Container } from 'react-bootstrap';
+import Footer from '../layout/Footer';
 
 export default function Profile() {
     useCheckCredentials();
@@ -27,14 +28,19 @@ export default function Profile() {
                 const response = await fetch(profilesUrl + "/" + name + "?_followers=true", options);
                 if (response.ok) {
                     const data = await response.json();
-                    setProfileData(data);
-                    setIsFollowing(data.followers.some((follower) => follower.name == getName()));
+                    if (data.errors){
+                        setProfileError("Could not fetch content from API");
+                    }
+                    else{
+                        setProfileData(data);
+                        setIsFollowing(data.followers.some((follower) => follower.name == getName()));
+                    }
                 }
                 else {
                     setProfileError("Could not fetch content from API");
                 }
             } catch(error) {
-                setProfileError(error);
+                setProfileError("Could not fetch content from API");
             } 
         })();
     }, []);
@@ -77,10 +83,10 @@ export default function Profile() {
     <Heading title="Profile" /> 
     <p className="centered">Go back to <Link to={`/Profiles/`} className="my-link">Profiles</Link></p>
     {profileError ? ( <div>Error: {profileError}</div>) : (
-    <Container className="form-container">
-    <Card style={{ width: '18rem' }}>
+    <Container style={{ margin: 'auto', width: '50%' }}>
+    <Card className="h-100" style={{ height: "250px" }}>
         <Card.Body>
-            <Card.Text>{profileData.name}</Card.Text>
+            <Card.Text>Name: {profileData.name} </Card.Text>
             {profileData.avatar && <Card.Img variant="top" src={profileData.avatar} alt="some alt avatar"/>}
             {profileData.banner && <Card.Img variant="top" src={profileData.banner} alt="some alt banner"/>}
             <Card.Text>E-mail: {profileData.email}</Card.Text>
@@ -94,7 +100,8 @@ export default function Profile() {
             )}
         </Card.Body>
     </Card>
-    </Container>)}                     
+    </Container>)} 
+    <Footer />                    
     </>
     )      
 }

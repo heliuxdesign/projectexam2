@@ -41,7 +41,14 @@ export default function Posts() {
                 const response = await fetch(url, options);
                 if (response.ok) {
                     const data = await response.json();
-                    setPostData(data);
+                    if (data.errors)
+                    {
+                        setPostError("Could not fetch content from API");
+                    }
+                    else
+                    {
+                        setPostData(data);
+                    }
                 }
                 else {
                     setPostError("Could not fetch content from API");
@@ -98,7 +105,7 @@ export default function Posts() {
         )))}
       </Row>
     </Container>
-    <Container className="form-container">
+    <Container className="layout-container">
         <Row>
           <Col xs={12}>
             <Button disabled={currentPage === 1} onClick={handlePrevPage}>
