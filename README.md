@@ -50,6 +50,16 @@ A kanban project board
 A repository link
 A hosted application demo link
 
+This project was bootstrapped with [Create React App].
+
+In the project directory, you can run:
+
+ `npm start`
+
+Runs the app in the development mode.
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
+The page will reload when you make changes.
+You may also see any lint errors in the console.
 
 
-Ensure that the readme.md file describes your project thoroughly, including how to setup and run the project locally and any special instructions for testers.
