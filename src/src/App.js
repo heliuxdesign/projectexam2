@@ -7,9 +7,11 @@ import Profiles from './components/profiles/Profiles';
 import Post from './components/posts/Post';
 import Profile from './components/profiles/Profile';
 
+const basename = process.env.REACT_APP_BASENAME || '/';
+
 function App() {
   return (
-    <BrowserRouter basename="/projectexam2/">
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route path="/" exact element={<LandingPage />} />
         <Route path="/Profiles" exact element={<Profiles />} />
